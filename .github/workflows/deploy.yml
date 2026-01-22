@@ -1,0 +1,120 @@
+name: Deploy Micro Frontends to Azure
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18.x'
+  AZURE_STATIC_WEB_APPS_API_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+  DOMAIN: micro.manish.online
+  CDN_BASE_URL: https://cdn.micro.manish.online
+  AZURE_CDN_PROFILE_NAME: ${{ secrets.AZURE_CDN_PROFILE_NAME }}
+  AZURE_CDN_ENDPOINT_NAME: ${{ secrets.AZURE_CDN_ENDPOINT_NAME }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    name: Build and Deploy
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Product Micro Frontend
+        run: |
+          cd packages/product
+          REMOTE_HOST_URL=https://${{ env.DOMAIN }}/remoteEntry.js npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Build Cart Micro Frontend
+        run: |
+          cd packages/cart
+          REMOTE_HOST_URL=https://${{ env.DOMAIN }}/remoteEntry.js npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Build Host Application
+        run: |
+          cd packages/host
+          REMOTE_PRODUCT_URL=${{ env.CDN_BASE_URL }}/product/remoteEntry.js \
+          REMOTE_CART_URL=${{ env.CDN_BASE_URL }}/cart/remoteEntry.js \
+          npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Prepare deployment artifacts
+        run: |
+          mkdir -p deployment
+          # Copy host files
+          cp -r packages/host/dist/* deployment/
+          # Create directories for micro frontends
+          mkdir -p deployment/product
+          mkdir -p deployment/cart
+          # Copy product files
+          cp -r packages/product/dist/* deployment/product/
+          # Copy cart files
+          cp -r packages/cart/dist/* deployment/cart/
+          # Generate cache-busting version
+          echo "BUILD_VERSION=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ env.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "deployment"
+          output_location: ""
+          skip_app_build: true
+
+      - name: Invalidate Azure CDN Cache
+        if: env.AZURE_CDN_PROFILE_NAME != ''
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.0
+          inlineScript: |
+            echo "Invalidating CDN cache..."
+            az cdn endpoint purge \
+              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+              --profile-name ${{ env.AZURE_CDN_PROFILE_NAME }} \
+              --name ${{ env.AZURE_CDN_ENDPOINT_NAME }} \
+              --content-paths "/*" "/product/*" "/cart/*" "/remoteEntry.js" "/product/remoteEntry.js" "/cart/remoteEntry.js"
+            echo "Cache invalidation initiated"
+
+      - name: Invalidate Azure Static Web Apps Cache
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.0
+          inlineScript: |
+            echo "Invalidating Static Web App cache..."
+            # Get static web app name from resource group
+            SWA_NAME=$(az staticwebapp list --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[0].name" -o tsv)
+            if [ ! -z "$SWA_NAME" ]; then
+              echo "Static Web App found: $SWA_NAME"
+              # Trigger a redeploy to clear cache
+              az staticwebapp update --name $SWA_NAME --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
+              echo "Cache invalidation triggered"
+            else
+              echo "Static Web App not found, skipping cache invalidation"
+            fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: deployment
+          retention-days: 7
+

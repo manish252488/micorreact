@@ -15,6 +15,54 @@ A complete implementation of a React Micro Frontend architecture using **Webpack
 - [Interview Questions & Answers](#interview-questions--answers)
 - [Best Practices](#best-practices)
 - [Troubleshooting](#troubleshooting)
+- [Documentation](#documentation)
+
+---
+
+## 📚 Documentation
+
+This project includes comprehensive documentation covering various aspects of the micro frontend architecture:
+
+### 🚀 Deployment & Production
+
+- **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Complete guide for deploying to Azure using GitHub Actions
+  - Azure Static Web Apps setup
+  - GitHub Actions workflows
+  - Environment configuration
+  - Domain setup
+
+- **[QUICK_DEPLOY.md](./QUICK_DEPLOY.md)** - Quick 5-minute deployment setup guide
+  - Fast setup instructions
+  - Common issues and solutions
+  - Verification steps
+
+- **[CACHE_INVALIDATION.md](./CACHE_INVALIDATION.md)** - Cache invalidation guide
+  - How cache invalidation works
+  - Manual invalidation steps
+  - Troubleshooting cache issues
+  - Best practices
+
+- **[WORKFLOW_BEHAVIOR.md](./WORKFLOW_BEHAVIOR.md)** - GitHub Actions workflow behavior
+  - How `deploy.yml` and `deploy-separate.yml` work
+  - When each workflow runs
+  - Commit message tags for selective deployment
+  - Real-world examples
+
+### 🌐 URL & Routing
+
+- **[URL_BEHAVIOR_GUIDE.md](./URL_BEHAVIOR_GUIDE.md)** - URL behavior in development vs production
+  - Why URLs stay on port 3000
+  - Production URL structure
+  - Environment variable configuration
+  - CDN and domain setup
+
+### 🧪 Testing
+
+- **[CONTRACT_TESTING_GUIDE.md](./CONTRACT_TESTING_GUIDE.md)** - Contract testing guide
+  - What is contract testing
+  - Setting up contract tests
+  - Testing Module Federation contracts
+  - Best practices
 
 ---
 
@@ -697,9 +745,20 @@ remotes: {
 
 ## 📚 Additional Resources
 
+### External Documentation
+
 - [Webpack Module Federation Documentation](https://webpack.js.org/concepts/module-federation/)
 - [Micro Frontends by Martin Fowler](https://martinfowler.com/articles/micro-frontends.html)
 - [Module Federation Examples](https://github.com/module-federation/module-federation-examples)
+
+### Project Documentation
+
+- [Deployment Guide](./DEPLOYMENT_GUIDE.md) - Complete Azure deployment guide
+- [Quick Deploy](./QUICK_DEPLOY.md) - Fast deployment setup
+- [URL Behavior Guide](./URL_BEHAVIOR_GUIDE.md) - Development vs production URLs
+- [Workflow Behavior](./WORKFLOW_BEHAVIOR.md) - GitHub Actions workflows explained
+- [Cache Invalidation](./CACHE_INVALIDATION.md) - Cache management guide
+- [Contract Testing](./CONTRACT_TESTING_GUIDE.md) - Testing micro frontend contracts
 
 ---
 
