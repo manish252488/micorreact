@@ -1,0 +1,28 @@
+{
+  "name": "microreact-workspace",
+  "version": "1.0.0",
+  "description": "React Micro Frontend Architecture using Module Federation",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "install:all": "npm install",
+    "start:host": "cd packages/host && npm start",
+    "start:product": "cd packages/product && npm start",
+    "start:cart": "cd packages/cart && npm start",
+    "start:all": "npm-run-all --parallel start:host start:product start:cart",
+    "build:host": "cd packages/host && npm run build",
+    "build:product": "cd packages/product && npm run build",
+    "build:cart": "cd packages/cart && npm run build",
+    "build:all": "npm-run-all build:product build:cart build:host"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
+

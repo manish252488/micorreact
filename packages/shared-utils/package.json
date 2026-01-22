@@ -1,0 +1,11 @@
+{
+  "name": "shared-utils",
+  "version": "1.0.0",
+  "description": "Shared utility functions for micro frontends",
+  "private": true,
+  "main": "src/index.js",
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {}
+}
+
