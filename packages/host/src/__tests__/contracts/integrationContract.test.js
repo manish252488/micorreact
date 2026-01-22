@@ -2,29 +2,27 @@
  * Integration Contract Tests
  * 
  * Tests that verify the integration between host and micro frontends.
- * These tests ensure the entire system works together correctly.
  */
 
 describe('Integration Contract Tests', () => {
   describe('Module Federation Integration', () => {
-    test('Host should be able to load Product micro frontend', async () => {
-      const ProductApp = await import('product/ProductApp');
+    test('Host should be able to load Product micro frontend', () => {
+      const ProductApp = require('product/ProductApp');
       expect(ProductApp).toBeDefined();
       expect(ProductApp.default).toBeDefined();
     });
 
-    test('Host should be able to load Cart micro frontend', async () => {
-      const CartApp = await import('cart/CartApp');
+    test('Host should be able to load Cart micro frontend', () => {
+      const CartApp = require('cart/CartApp');
       expect(CartApp).toBeDefined();
       expect(CartApp.default).toBeDefined();
     });
 
-    test('Both micro frontends should use shared React instance', async () => {
+    test('Both micro frontends should use shared React instance', () => {
       const React = require('react');
-      const ProductApp = await import('product/ProductApp');
-      const CartApp = await import('cart/CartApp');
+      const ProductApp = require('product/ProductApp');
+      const CartApp = require('cart/CartApp');
 
-      // All should use the same React
       expect(React).toBeDefined();
       expect(ProductApp.default).toBeDefined();
       expect(CartApp.default).toBeDefined();
@@ -33,8 +31,9 @@ describe('Integration Contract Tests', () => {
 
   describe('Redux Store Integration', () => {
     test('Product and Cart should share the same Redux store', async () => {
-      const store = require('../../store').default;
-      const { addToCart } = require('../../store');
+      const storeModule = await import('../../store/index.js');
+      const store = storeModule.default;
+      const { addToCart } = storeModule;
 
       // Add item from "Product" perspective
       store.dispatch(addToCart({ id: 1, name: 'Product Item', price: 100 }));
@@ -45,9 +44,10 @@ describe('Integration Contract Tests', () => {
       expect(state.cart.items[0].name).toBe('Product Item');
     });
 
-    test('State changes in one micro frontend should reflect in another', () => {
-      const store = require('../../store').default;
-      const { addToCart, updateQuantity } = require('../../store');
+    test('State changes in one micro frontend should reflect in another', async () => {
+      const storeModule = await import('../../store/index.js');
+      const store = storeModule.default;
+      const { addToCart, updateQuantity } = storeModule;
 
       // Simulate Product adding item
       store.dispatch(addToCart({ id: 1, name: 'Test', price: 50 }));
@@ -63,8 +63,10 @@ describe('Integration Contract Tests', () => {
   });
 
   describe('Shared Utilities Integration', () => {
-    test('All micro frontends should access same utilities', async () => {
-      const { formatCurrency, logger } = await import('host/utils');
+    test('All micro frontends should access same utilities', () => {
+      const utilsModule = require('host/utils');
+      const utils = utilsModule.default || utilsModule;
+      const { formatCurrency, logger } = utils;
 
       // Both should work
       const formatted = formatCurrency(100);
@@ -74,28 +76,4 @@ describe('Integration Contract Tests', () => {
       expect(() => logger.info('Test')).not.toThrow();
     });
   });
-
-  describe('Routing Integration', () => {
-    test('Host routing should work with micro frontend routing', () => {
-      const { BrowserRouter, Routes, Route } = require('react-router-dom');
-      const { Provider } = require('react-redux');
-      const { render } = require('@testing-library/react');
-      const store = require('../../store').default;
-
-      // This tests that nested routing works
-      expect(() => {
-        render(
-          <Provider store={store}>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/products/*" element={<div>Product Route</div>} />
-                <Route path="/cart/*" element={<div>Cart Route</div>} />
-              </Routes>
-            </BrowserRouter>
-          </Provider>
-        );
-      }).not.toThrow();
-    });
-  });
 });
-

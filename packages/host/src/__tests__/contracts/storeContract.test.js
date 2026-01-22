@@ -10,8 +10,10 @@ describe('Redux Store Contract Tests', () => {
   let actions;
 
   beforeAll(() => {
-    store = require('../../store').default;
-    actions = require('../../store');
+    // Use moduleNameMapper from jest.config which handles ES6 imports via Babel
+    const storeModule = require('host/store');
+    store = storeModule.default;
+    actions = storeModule;
   });
 
   describe('Store Structure Contract', () => {
@@ -166,4 +168,3 @@ describe('Redux Store Contract Tests', () => {
     });
   });
 });
-

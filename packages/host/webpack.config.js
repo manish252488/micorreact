@@ -16,6 +16,7 @@ module.exports = merge(common, {
   plugins: [
     new ModuleFederationPlugin({
       name: "host",
+      filename: "remoteEntry.js",
       remotes: {
         product: "product@http://localhost:3001/remoteEntry.js",
         cart: "cart@http://localhost:3002/remoteEntry.js",

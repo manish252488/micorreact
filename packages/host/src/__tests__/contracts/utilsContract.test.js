@@ -13,8 +13,10 @@ describe('Shared Utilities Contract Tests', () => {
       const utilsModule = await import('host/utils');
       utils = utilsModule.default || utilsModule;
     } catch (error) {
-      console.warn('Utils not available, using fallback');
-      utils = require('../../utils/fallbackUtils');
+      console.warn('Utils not available, using direct import');
+      // Use direct import as fallback
+      const utilsPath = require('path').resolve(__dirname, '../../../shared-utils/src/index.js');
+      utils = require(utilsPath).default || require(utilsPath);
     }
   });
 
@@ -152,17 +154,17 @@ describe('Shared Utilities Contract Tests', () => {
   });
 
   describe('Utility Export Contract', () => {
-    test('Utils should be exportable from host/utils', async () => {
-      const utilsModule = await import('host/utils');
+    test('Utils should be exportable from host/utils', () => {
+      const utilsModule = require('host/utils');
       expect(utilsModule.default || utilsModule).toBeDefined();
     });
 
-    test('Individual utilities should be importable', async () => {
-      const { formatCurrency, logger, storage } = await import('host/utils');
-      expect(formatCurrency).toBeDefined();
-      expect(logger).toBeDefined();
-      expect(storage).toBeDefined();
+    test('Individual utilities should be importable', () => {
+      const utilsModule = require('host/utils');
+      const utilsObj = utilsModule.default || utilsModule;
+      expect(utilsObj.formatCurrency).toBeDefined();
+      expect(utilsObj.logger).toBeDefined();
+      expect(utilsObj.storage).toBeDefined();
     });
   });
 });
-

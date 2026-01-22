@@ -10,6 +10,9 @@ module.exports = merge(common, {
     new ModuleFederationPlugin({
       name: "cart",
       filename: "remoteEntry.js",
+      remotes: {
+        host: "host@http://localhost:3000/remoteEntry.js",
+      },
       exposes: {
         "./CartApp": "./src/App",
       },
