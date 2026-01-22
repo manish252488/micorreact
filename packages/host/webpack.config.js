@@ -3,6 +3,16 @@ const path = require("path");
 const common = require("../../webpack.common.js");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 
+// Get remote URLs from environment variables with fallbacks
+const getRemoteUrl = (name, defaultPort) => {
+  const envVar = process.env[`REMOTE_${name.toUpperCase()}_URL`];
+  if (envVar) {
+    return `${name}@${envVar}`;
+  }
+  // Development fallback
+  return `${name}@http://localhost:${defaultPort}/remoteEntry.js`;
+};
+
 module.exports = merge(common, {
   entry: "./src/index.jsx",
   devServer: {
@@ -22,8 +32,8 @@ module.exports = merge(common, {
       name: "host",
       filename: "remoteEntry.js",
       remotes: {
-        product: "product@http://localhost:3001/remoteEntry.js",
-        cart: "cart@http://localhost:3002/remoteEntry.js",
+        product: getRemoteUrl("product", 3001),
+        cart: getRemoteUrl("cart", 3002),
       },
       exposes: {
         "./store": "./src/store",

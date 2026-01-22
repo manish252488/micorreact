@@ -2,6 +2,16 @@ const { merge } = require("webpack-merge");
 const common = require("../../webpack.common.js");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 
+// Get host URL from environment variable with fallback
+const getHostUrl = () => {
+  const envVar = process.env.REMOTE_HOST_URL;
+  if (envVar) {
+    return `host@${envVar}`;
+  }
+  // Development fallback
+  return "host@http://localhost:3000/remoteEntry.js";
+};
+
 module.exports = merge(common, {
   entry: "./src/index.jsx",
   devServer: {
@@ -15,7 +25,7 @@ module.exports = merge(common, {
       name: "cart",
       filename: "remoteEntry.js",
       remotes: {
-        host: "host@http://localhost:3000/remoteEntry.js",
+        host: getHostUrl(),
       },
       exposes: {
         "./CartApp": "./src/App",
