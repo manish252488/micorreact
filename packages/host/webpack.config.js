@@ -4,8 +4,12 @@ const common = require("../../webpack.common.js");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 
 module.exports = merge(common, {
+  entry: "./src/index.jsx",
   devServer: {
     port: 3000,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
   },
   resolve: {
     alias: {
@@ -29,18 +33,22 @@ module.exports = merge(common, {
         react: {
           singleton: true,
           requiredVersion: "^18.2.0",
+          eager: true,
         },
         "react-dom": {
           singleton: true,
           requiredVersion: "^18.2.0",
+          eager: true,
         },
         "react-redux": {
           singleton: true,
           requiredVersion: "^8.1.3",
+          eager: true,
         },
         redux: {
           singleton: true,
           requiredVersion: "^4.2.1",
+          eager: true,
         },
       },
     }),

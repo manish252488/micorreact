@@ -27,16 +27,16 @@ export const isHostAvailable = (moduleName) => {
 export const safeImportHostModule = async (modulePath, retries = 3, delay = 1000) => {
   for (let i = 0; i < retries; i++) {
     try {
-      // Use dynamic import with webpack magic comment for Module Federation
-      // This allows webpack to properly handle remote module imports
+      // Use static imports for Module Federation remotes
+      // This allows webpack to properly analyze and bundle the imports
       let module;
       if (modulePath === 'host/store') {
         module = await import(/* webpackChunkName: "host-store" */ 'host/store');
       } else if (modulePath === 'host/utils') {
         module = await import(/* webpackChunkName: "host-utils" */ 'host/utils');
       } else {
-        // Fallback for other module paths (with warning suppression)
-        module = await import(/* webpackMode: "lazy" */ modulePath);
+        // Only support known Module Federation remotes
+        throw new Error(`Unsupported module path: ${modulePath}. Only 'host/store' and 'host/utils' are supported.`);
       }
       return { success: true, module, error: null };
     } catch (error) {

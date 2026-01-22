@@ -3,8 +3,12 @@ const common = require("../../webpack.common.js");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 
 module.exports = merge(common, {
+  entry: "./src/index.jsx",
   devServer: {
     port: 3001,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
   },
   plugins: [
     new ModuleFederationPlugin({

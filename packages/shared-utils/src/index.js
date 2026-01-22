@@ -3,6 +3,16 @@
  * This module exports common utility functions that can be used across all micro frontends
  */
 
+// Import host loader utilities first to ensure they're available
+import { 
+  storeLoader, 
+  utilsLoader, 
+  createSafeStoreLoader, 
+  createSafeUtilsLoader,
+  safeImportHostModule,
+  isHostAvailable 
+} from './hostLoader';
+
 // Re-export host loader utilities
 export { 
   storeLoader, 
@@ -11,7 +21,7 @@ export {
   createSafeUtilsLoader,
   safeImportHostModule,
   isHostAvailable 
-} from './hostLoader';
+};
 
 // Format currency
 export const formatCurrency = (amount, currency = 'USD') => {
