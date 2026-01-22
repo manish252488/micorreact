@@ -1,0 +1,21 @@
+# Cypress should never be included in production builds
+cypress/
+cypress.config.js
+scripts/check-cypress-env.js
+
+# Test files
+**/__tests__/
+**/*.test.js
+**/*.test.jsx
+**/*.spec.js
+**/*.spec.jsx
+
+# Development files
+.env.local
+.env.development
+*.log
+
+# Documentation (optional - remove if you want docs in npm package)
+*.md
+!README.md
+

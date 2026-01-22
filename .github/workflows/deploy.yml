@@ -30,7 +30,11 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --production=false
+        env:
+          NODE_ENV: production
+        # Note: Cypress is in devDependencies and will be installed
+        # but the build process will exclude it from production bundles
 
       - name: Build Product Micro Frontend
         run: |
@@ -58,7 +62,7 @@ jobs:
       - name: Prepare deployment artifacts
         run: |
           mkdir -p deployment
-          # Copy host files
+          # Copy host files (exclude Cypress and test files)
           cp -r packages/host/dist/* deployment/
           # Create directories for micro frontends
           mkdir -p deployment/product
@@ -67,6 +71,8 @@ jobs:
           cp -r packages/product/dist/* deployment/product/
           # Copy cart files
           cp -r packages/cart/dist/* deployment/cart/
+          # Ensure Cypress is NOT included in deployment
+          rm -rf deployment/cypress deployment/**/cypress
           # Generate cache-busting version
           echo "BUILD_VERSION=$(date +%s)" >> $GITHUB_ENV
 

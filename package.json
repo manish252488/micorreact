@@ -17,10 +17,19 @@
     "build:cart": "cd packages/cart && npm run build",
     "build:all": "npm-run-all build:product build:cart build:host",
     "build:prod": "npm run build:all",
-    "deploy:check": "echo 'Deployment will be triggered via GitHub Actions on push to main branch'"
+    "deploy:check": "echo 'Deployment will be triggered via GitHub Actions on push to main branch'",
+    "cypress:open": "node scripts/check-cypress-env.js && cross-env NODE_ENV=development cypress open",
+    "cypress:run": "node scripts/check-cypress-env.js && cross-env NODE_ENV=development cypress run",
+    "cypress:run:headless": "node scripts/check-cypress-env.js && cross-env NODE_ENV=development cypress run --headless",
+    "test:e2e": "node scripts/check-cypress-env.js && cross-env NODE_ENV=development cypress run",
+    "test:e2e:open": "node scripts/check-cypress-env.js && cross-env NODE_ENV=development cypress open",
+    "precypress:open": "node scripts/check-cypress-env.js",
+    "precypress:run": "node scripts/check-cypress-env.js"
   },
   "devDependencies": {
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "^4.1.5",
+    "cypress": "^13.6.0",
+    "cross-env": "^7.0.3"
   },
   "engines": {
     "node": ">=16.0.0",

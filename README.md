@@ -64,6 +64,19 @@ This project includes comprehensive documentation covering various aspects of th
   - Testing Module Federation contracts
   - Best practices
 
+- **[CYPRESS_GUIDE.md](./CYPRESS_GUIDE.md)** - Cypress E2E testing guide
+  - Setting up Cypress
+  - Writing E2E tests for micro frontends
+  - Testing Module Federation integration
+  - CI/CD integration
+  - Best practices
+
+- **[CYPRESS_PRODUCTION_SAFETY.md](./CYPRESS_PRODUCTION_SAFETY.md)** - Cypress production safety
+  - Multiple safeguards to prevent production runs
+  - Environment checks and validations
+  - Deployment protection
+  - Verification commands
+
 ---
 
 ## 🎯 What are Micro Frontends?
@@ -759,6 +772,8 @@ remotes: {
 - [Workflow Behavior](./WORKFLOW_BEHAVIOR.md) - GitHub Actions workflows explained
 - [Cache Invalidation](./CACHE_INVALIDATION.md) - Cache management guide
 - [Contract Testing](./CONTRACT_TESTING_GUIDE.md) - Testing micro frontend contracts
+- [Cypress E2E Testing](./CYPRESS_GUIDE.md) - End-to-end testing guide
+- [Cypress Production Safety](./CYPRESS_PRODUCTION_SAFETY.md) - Production safety safeguards
 
 ---
 
